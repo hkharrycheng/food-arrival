@@ -52,6 +52,20 @@ body {
 .header-right input[type="time"] {
   width: 120px;
 }
+.add-order-btn {
+  background: #22c55e;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.add-order-btn:hover {
+  background: #16a34a;
+}
 .header-right input:focus {
   outline: none;
   border-color: #fbbf24;
@@ -134,6 +148,94 @@ body {
 .add-btn:active { opacity: 0.8; }
 .food-list {
   margin-bottom: 16px;
+}
+/* 分次下單分組 */
+.order-group {
+  margin-bottom: 20px;
+}
+.order-group-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: linear-gradient(135deg, #1e293b, #0f172a);
+  border-radius: 8px;
+  margin-bottom: 10px;
+  border-left: 3px solid #fbbf24;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.2s;
+}
+.order-group-header:hover {
+  background: linear-gradient(135deg, #334155, #1e293b);
+}
+/* 收合狀態：只改透明度，唔改顏色 */
+.order-group.collapsed .order-group-header {
+  opacity: 0.7;
+}
+/* 全上狀態：綠色 */
+.order-group.all-served .order-group-header {
+  border-left-color: #22c55e;
+}
+.order-group.all-served .order-batch {
+  color: #22c55e;
+}
+.order-group.all-served .order-time-badge {
+  background: #22c55e;
+}
+.collapse-icon {
+  font-size: 10px;
+  color: #71717a;
+  width: 12px;
+  text-align: center;
+}
+.order-batch {
+  font-weight: bold;
+  color: #fbbf24;
+  font-size: 13px;
+}
+.order-time-badge {
+  background: #fbbf24;
+  color: #0f172a;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
+.order-group-stats {
+  margin-left: auto;
+  font-size: 11px;
+  color: #71717a;
+}
+.all-served-badge {
+  background: #22c55e;
+  color: white;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: bold;
+}
+.order-group-content {
+  animation: slideDown 0.2s ease-out;
+}
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.order-time-tag {
+  display: inline-block;
+  background: #27272a;
+  color: #a1a1aa;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  margin-left: 8px;
+  cursor: pointer;
+  border: 1px solid #3f3f46;
+}
+.order-time-tag:hover {
+  background: #3f3f46;
+  color: #fbbf24;
 }
 .food-item {
   background: #1a1d27;
@@ -302,17 +404,19 @@ body {
   <div class="header-right">
     <label>枱號</label>
     <input type="text" id="tableNo" placeholder="31A" value="">
-    <label>落單</label>
+    <label>預設下單</label>
     <input type="time" id="orderTime" value="">
+    <button class="add-order-btn" onclick="setNowAsOrderTime()" title="設定現在時間為新食物嘅下單時間（已有食物唔會變）">➕ 加單</button>
   </div>
 </div>
 
 <div class="agent-hint">
   <div class="left">
     <strong>🤖 Agent 指令：</strong><br>
-    <strong>J04</strong> + 餐單相 → 認枱號、認菜式，自動更新模板<br>
+    <strong>J04</strong> + 餐單相 → 認枱號、認菜式，自動更新模板（新單用現在時間）<br>
     <strong>J04</strong> + 食物相 → 認食物，標記已上，自動更新模板<br>
     <strong>J04: clear</strong> → 清空模板<br>
+    <span style="color:#52525b">💡 每次上傳餐單相都當一次新下單，已有菜式保留原下單時間</span><br>
     <span style="color:#52525b">更新後按「🗑️ 重置」載入最新模板</span>
   </div>
   <div class="right">
@@ -365,23 +469,27 @@ body {
 let items = [];
 let tableNo = '';
 let orderTime = '';
+let collapsedGroups = {}; // 記錄分組收合狀態：{ "18:28": true/false }
 
-// 內置預設數據（file:// 本地打開時用）
+// 內置預設數據（file:// 本地打開時用）- 模擬分次下單
 const DEFAULT_DATA = {
   items: [
-    {id: 1, name: "炙燒黑椒蠔", price: 10, status: "waiting", servedTime: null},
-    {id: 2, name: "北海道巨大L Size珍寶帆立貝", price: 21, status: "waiting", servedTime: null},
-    {id: 3, name: "辣味三文魚", price: 17, status: "waiting", servedTime: null},
-    {id: 4, name: "牛肉烏冬", price: 32, status: "waiting", servedTime: null},
-    {id: 5, name: "元氣卷", price: 22, status: "waiting", servedTime: null},
-    {id: 6, name: "三文魚籽", price: 17, status: "waiting", servedTime: null},
-    {id: 7, name: "海膽墨魚", price: 17, status: "waiting", servedTime: null},
-    {id: 8, name: "蔥香脆蒜海鮮", price: 14, status: "waiting", servedTime: null},
-    {id: 9, name: "北海道巨大L Size珍寶帆立貝 x2", price: 42, status: "waiting", servedTime: null},
-    {id: 10, name: "辛辣吞拿魚蔥花卷", price: 14, status: "waiting", servedTime: null}
+    // 第一次下單 18:28
+    {id: 1, name: "炙燒黑椒蠔", price: 10, status: "served", servedTime: "2026-10-08T18:35:00", orderTime: "18:28"},
+    {id: 2, name: "北海道巨大L Size珍寶帆立貝", price: 21, status: "served", servedTime: "2026-10-08T18:40:00", orderTime: "18:28"},
+    {id: 3, name: "辣味三文魚", price: 17, status: "served", servedTime: "2026-10-08T18:45:00", orderTime: "18:28"},
+    {id: 4, name: "牛肉烏冬", price: 32, status: "served", servedTime: "2026-10-08T18:50:00", orderTime: "18:28"},
+    // 第二次下單 19:15（加單）
+    {id: 5, name: "元氣卷", price: 22, status: "served", servedTime: "2026-10-08T19:25:00", orderTime: "19:15"},
+    {id: 6, name: "三文魚籽", price: 17, status: "served", servedTime: "2026-10-08T19:30:00", orderTime: "19:15"},
+    {id: 7, name: "海膽墨魚", price: 17, status: "waiting", servedTime: null, orderTime: "19:15"},
+    // 第三次下單 19:45（再加單）
+    {id: 8, name: "蔥香脆蒜海鮮", price: 14, status: "waiting", servedTime: null, orderTime: "19:45"},
+    {id: 9, name: "北海道巨大L Size珍寶帆立貝 x2", price: 42, status: "waiting", servedTime: null, orderTime: "19:45"},
+    {id: 10, name: "辛辣吞拿魚蔥花卷", price: 14, status: "waiting", servedTime: null, orderTime: "19:45"}
   ],
-  tableNo: "",
-  orderTime: ""
+  tableNo: "31A",
+  orderTime: "18:28" // 預設下單時間（新增食物時用）
 };
 
 // 從 JSON 模板載入預設數據（http/https 環境先用到）
@@ -417,11 +525,20 @@ async function loadData() {
     items = data.items || [];
     tableNo = data.tableNo || '';
     orderTime = data.orderTime || '';
+    collapsedGroups = data.collapsedGroups || {};
   } else {
     await loadFromJson();
     // 第一次讀取後，存入 localStorage
     saveData();
   }
+  // 確保每道菜都有自己嘅 orderTime（舊數據兼容）
+  // 加單時只改全局預設時間，唔會影響已有菜式
+  items.forEach(item => {
+    if (!item.orderTime) {
+      item.orderTime = orderTime; // 用當前全局時間填充，之後就唔會再變
+    }
+  });
+  saveData();
   document.getElementById('tableNo').value = tableNo;
   document.getElementById('orderTime').value = orderTime;
   if (!orderTime) {
@@ -435,8 +552,29 @@ async function loadData() {
 // 儲存到本地
 function saveData() {
   localStorage.setItem('foodArrivalData', JSON.stringify({
-    items, tableNo, orderTime
+    items, tableNo, orderTime, collapsedGroups
   }));
+}
+
+// 將現在時間設為預設下單時間（加單用）
+// 注意：只影響之後新增嘅食物，已有食物嘅下單時間唔會變
+function setNowAsOrderTime() {
+  const now = new Date();
+  const timeStr = now.toTimeString().slice(0, 5);
+  const oldTime = orderTime;
+  orderTime = timeStr;
+  document.getElementById('orderTime').value = timeStr;
+  saveData();
+  render();
+  // 提示用戶
+  const btn = event.target;
+  const originalText = btn.textContent;
+  btn.textContent = `✅ 新單用 ${timeStr}`;
+  btn.style.background = '#16a34a';
+  setTimeout(() => {
+    btn.textContent = originalText;
+    btn.style.background = '';
+  }, 2000);
 }
 
 // 新增項目
@@ -452,7 +590,8 @@ function addItem() {
     name,
     price,
     status: 'waiting',
-    servedTime: null
+    servedTime: null,
+    orderTime: orderTime // 使用頁面頂部嘅預設下單時間
   });
   document.getElementById('newName').value = '';
   document.getElementById('newPrice').value = '';
@@ -486,22 +625,52 @@ function deleteItem(id, event) {
   }
 }
 
-// 計算等候時間
+// 計算等候時間（用每道菜自己嘅下單時間）
 function getWaitTime(item) {
-  if (!orderTime) return '';
-  const now = new Date();
-  const [h, m] = orderTime.split(':').map(Number);
+  const itemOrderTime = item.orderTime || orderTime;
+  if (!itemOrderTime) return '';
+  
+  const [h, m] = itemOrderTime.split(':').map(Number);
   const order = new Date();
   order.setHours(h, m, 0, 0);
-  const diff = Math.floor((now - order) / 60000);
-  if (diff < 0) return '未到落單時間';
-  if (diff < 60) return `已等 ${diff} 分鐘`;
+  
+  let endTime;
+  if (item.status === 'served' && item.servedTime) {
+    endTime = new Date(item.servedTime);
+  } else {
+    endTime = new Date();
+  }
+  
+  const diff = Math.floor((endTime - order) / 60000);
+  if (diff < 0) return '未到下單時間';
+  if (diff < 60) return `等了 ${diff} 分鐘`;
   const hrs = Math.floor(diff / 60);
   const mins = diff % 60;
-  return `已等 ${hrs} 小時 ${mins} 分鐘`;
+  return `等了 ${hrs} 小時 ${mins} 分鐘`;
 }
 
-// 渲染
+// 修改單道菜嘅下單時間
+function changeOrderTime(id, event) {
+  event.stopPropagation();
+  const item = items.find(i => i.id === id);
+  if (!item) return;
+  const currentTime = item.orderTime || orderTime;
+  const newTime = prompt('輸入呢道菜嘅下單時間（HH:MM）：', currentTime);
+  if (newTime && /^\d{2}:\d{2}$/.test(newTime)) {
+    item.orderTime = newTime;
+    saveData();
+    render();
+  }
+}
+
+// 切換分組收合
+function toggleGroup(orderTimeKey) {
+  collapsedGroups[orderTimeKey] = !collapsedGroups[orderTimeKey];
+  saveData();
+  render();
+}
+
+// 渲染（按下單時間分組，支援收合）
 function render() {
   const list = document.getElementById('foodList');
   const waiting = items.filter(i => i.status === 'waiting');
@@ -522,21 +691,70 @@ function render() {
     return;
   }
 
-  list.innerHTML = items.map(item => {
-    const meta = item.status === 'waiting'
-      ? `<span class="wait-time">${getWaitTime(item)}</span>`
-      : `<span class="served-time">上菜時間：${item.servedTime ? new Date(item.servedTime).toLocaleTimeString('zh-HK', {hour:'2-digit', minute:'2-digit'}) : '-'}</span>`;
-    return `
-      <div class="food-item ${item.status}" onclick="toggleItem(${item.id})">
-        <button class="delete-btn" onclick="deleteItem(${item.id}, event)">×</button>
-        <div class="info">
-          <div class="name">${item.name}<span class="price">$${item.price}</span></div>
-          <div class="meta">${meta}</div>
+  // 按下單時間分組
+  const groups = {};
+  items.forEach(item => {
+    const ot = item.orderTime || orderTime || '未設定';
+    if (!groups[ot]) groups[ot] = [];
+    groups[ot].push(item);
+  });
+
+  // 排序分組
+  const sortedTimes = Object.keys(groups).sort();
+
+  let html = '';
+  sortedTimes.forEach((time, idx) => {
+    const groupItems = groups[time];
+    const groupWaiting = groupItems.filter(i => i.status === 'waiting').length;
+    const groupServed = groupItems.filter(i => i.status === 'served').length;
+    const allServed = groupWaiting === 0;
+    
+    // 自動收合：全上咗就自動收合（除非用戶手動展開）
+    let isCollapsed = collapsedGroups[time];
+    if (isCollapsed === undefined) {
+      isCollapsed = allServed; // 全上自動收合
+    }
+    
+    const collapseIcon = isCollapsed ? '▶' : '▼';
+    const collapseClass = isCollapsed ? 'collapsed' : 'expanded';
+    const servedClass = allServed ? 'all-served' : '';
+    
+    html += `
+      <div class="order-group ${collapseClass} ${servedClass}">
+        <div class="order-group-header" onclick="toggleGroup('${time}')">
+          <span class="collapse-icon">${collapseIcon}</span>
+          <span class="order-batch">第 ${idx + 1} 次下單</span>
+          <span class="order-time-badge">🕐 ${time}</span>
+          <span class="order-group-stats">${groupServed}已上 / ${groupWaiting}未上</span>
+          ${allServed ? '<span class="all-served-badge">✅ 全上</span>' : ''}
         </div>
-        <div class="status">${item.status === 'waiting' ? '未上' : '已上 ✓'}</div>
-      </div>
+        <div class="order-group-content" style="display: ${isCollapsed ? 'none' : 'block'}">
     `;
-  }).join('');
+    
+    groupItems.forEach(item => {
+      const meta = item.status === 'waiting'
+        ? `<span class="wait-time">${getWaitTime(item)}</span>`
+        : `<span class="served-time">上菜：${item.servedTime ? new Date(item.servedTime).toLocaleTimeString('zh-HK', {hour:'2-digit', minute:'2-digit'}) : '-'}</span>`;
+      
+      html += `
+        <div class="food-item ${item.status}" onclick="toggleItem(${item.id})">
+          <button class="delete-btn" onclick="deleteItem(${item.id}, event)">×</button>
+          <div class="info">
+            <div class="name">${item.name}<span class="price">$${item.price}</span></div>
+            <div class="meta">
+              ${meta}
+              <span class="order-time-tag" onclick="changeOrderTime(${item.id}, event)" title="點擊修改下單時間">下單 ${item.orderTime || orderTime || '未設定'} ✏️</span>
+            </div>
+          </div>
+          <div class="status">${item.status === 'waiting' ? '未上' : '已上 ✓'}</div>
+        </div>
+      `;
+    });
+    
+    html += '</div></div>';
+  });
+
+  list.innerHTML = html;
 }
 
 // 全部重置：清除 localStorage，重新讀取 JSON 模板
@@ -600,9 +818,11 @@ function updateClocks() {
   const ss = now.getSeconds().toString().padStart(2, '0');
   document.getElementById('currentTime').textContent = `${hh}:${mm}:${ss}`;
   
-  // 已用餐時間（從落單時間計算）
-  if (orderTime) {
-    const [oh, om] = orderTime.split(':').map(Number);
+  // 已用餐時間（從最早嘅下單時間計算）
+  const allOrderTimes = items.map(i => i.orderTime || orderTime).filter(Boolean);
+  if (allOrderTimes.length > 0) {
+    const earliestTime = allOrderTimes.sort()[0]; // 最早嘅下單時間
+    const [oh, om] = earliestTime.split(':').map(Number);
     const orderDate = new Date();
     orderDate.setHours(oh, om, 0, 0);
     let diff = Math.floor((now - orderDate) / 1000);
