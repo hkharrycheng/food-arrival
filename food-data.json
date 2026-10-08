@@ -1,0 +1,76 @@
+{
+  "items": [
+    {
+      "id": 1,
+      "name": "炙燒黑椒蠔",
+      "price": 10,
+      "status": "waiting",
+      "servedTime": null
+    },
+    {
+      "id": 2,
+      "name": "北海道巨大L Size珍寶帆立貝",
+      "price": 21,
+      "status": "waiting",
+      "servedTime": null
+    },
+    {
+      "id": 3,
+      "name": "辣味三文魚",
+      "price": 17,
+      "status": "waiting",
+      "servedTime": null
+    },
+    {
+      "id": 4,
+      "name": "牛肉烏冬",
+      "price": 32,
+      "status": "waiting",
+      "servedTime": null
+    },
+    {
+      "id": 5,
+      "name": "元氣卷",
+      "price": 22,
+      "status": "waiting",
+      "servedTime": null
+    },
+    {
+      "id": 6,
+      "name": "三文魚籽",
+      "price": 17,
+      "status": "waiting",
+      "servedTime": null
+    },
+    {
+      "id": 7,
+      "name": "海膽墨魚",
+      "price": 17,
+      "status": "waiting",
+      "servedTime": null
+    },
+    {
+      "id": 8,
+      "name": "蔥香脆蒜海鮮",
+      "price": 14,
+      "status": "waiting",
+      "servedTime": null
+    },
+    {
+      "id": 9,
+      "name": "北海道巨大L Size珍寶帆立貝 x2",
+      "price": 42,
+      "status": "waiting",
+      "servedTime": null
+    },
+    {
+      "id": 10,
+      "name": "辛辣吞拿魚蔥花卷",
+      "price": 14,
+      "status": "waiting",
+      "servedTime": null
+    }
+  ],
+  "tableNo": "",
+  "orderTime": ""
+}
