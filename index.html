@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🍽️ 上菜 Checklist - HIS Tools</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: #0f1117;
+  color: #e4e4e7;
+  min-height: 100vh;
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.header-left h1 {
+  font-size: 20px;
+  color: #fbbf24;
+}
+.header-left .subtitle {
+  font-size: 11px;
+  color: #71717a;
+}
+.header-right {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.header-right label {
+  font-size: 11px;
+  color: #a1a1aa;
+}
+.header-right input {
+  background: #0f1117;
+  border: 1px solid #3f3f46;
+  border-radius: 6px;
+  padding: 6px 8px;
+  color: #e4e4e7;
+  font-size: 13px;
+  width: 60px;
+}
+.header-right input[type="time"] {
+  width: 120px;
+}
+.header-right input:focus {
+  outline: none;
+  border-color: #fbbf24;
+}
+.stats-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.stat-box {
+  flex: 1;
+  background: #1a1d27;
+  border-radius: 12px;
+  padding: 14px;
+  text-align: center;
+  border: 1px solid #27272a;
+}
+.stat-box .num {
+  font-size: 28px;
+  font-weight: bold;
+}
+.stat-box.waiting .num { color: #fbbf24; }
+.stat-box.served .num { color: #22c55e; }
+.stat-box.total .num { color: #60a5fa; }
+.stat-box .label {
+  font-size: 12px;
+  color: #71717a;
+  margin-top: 2px;
+}
+.add-form {
+  background: #1a1d27;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+  border: 1px solid #27272a;
+}
+.add-form h3 {
+  font-size: 14px;
+  color: #a1a1aa;
+  margin-bottom: 10px;
+}
+.add-inputs {
+  display: flex;
+  gap: 8px;
+}
+.add-inputs input[name="name"] {
+  flex: 2;
+  background: #0f1117;
+  border: 1px solid #3f3f46;
+  border-radius: 8px;
+  padding: 10px;
+  color: #e4e4e7;
+  font-size: 14px;
+}
+.add-inputs input[name="price"] {
+  flex: 1;
+  background: #0f1117;
+  border: 1px solid #3f3f46;
+  border-radius: 8px;
+  padding: 10px;
+  color: #e4e4e7;
+  font-size: 14px;
+}
+.add-inputs input:focus {
+  outline: none;
+  border-color: #fbbf24;
+}
+.add-btn {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px;
+  background: #fbbf24;
+  color: #0f1117;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.add-btn:active { opacity: 0.8; }
+.food-list {
+  margin-bottom: 16px;
+}
+.food-item {
+  background: #1a1d27;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: all 0.2s;
+  position: relative;
+}
+.food-item.waiting {
+  border-color: #fbbf24;
+}
+.food-item.served {
+  background: #14231a;
+  border-color: #22c55e;
+}
+.food-item .info { flex: 1; }
+.food-item .name {
+  font-size: 16px;
+  font-weight: 500;
+}
+.food-item.served .name {
+  text-decoration: line-through;
+  color: #71717a;
+}
+.food-item .price {
+  color: #71717a;
+  font-size: 14px;
+  margin-left: 8px;
+}
+.food-item .meta {
+  font-size: 12px;
+  color: #71717a;
+  margin-top: 4px;
+}
+.food-item.waiting .wait-time {
+  color: #fbbf24;
+  font-weight: 600;
+}
+.food-item.served .served-time {
+  color: #22c55e;
+}
+.food-item .status {
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 20px;
+  min-width: 60px;
+  text-align: center;
+}
+.food-item.waiting .status {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+}
+.food-item.served .status {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+.food-item .delete-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #52525b;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+.food-item .delete-btn:hover { color: #ef4444; }
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: #52525b;
+}
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+.empty-state p { font-size: 14px; }
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+  align-items: center;
+}
+.action-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.action-btn.reset {
+  background: transparent;
+  color: #dc2626;
+  border: 1px solid #dc2626;
+  font-size: 12px;
+  padding: 8px 12px;
+}
+.action-btn.export {
+  flex: 1;
+  background: #2563eb;
+  color: white;
+}
+.action-btn:active { opacity: 0.8; }
+.agent-hint {
+  background: #1a1d27;
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 16px;
+  border: 1px solid #27272a;
+  font-size: 12px;
+  color: #71717a;
+  line-height: 1.6;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.agent-hint strong {
+  color: #fbbf24;
+}
+.agent-hint .left {
+  flex: 1;
+}
+.agent-hint .right {
+  text-align: right;
+  min-width: 100px;
+}
+.agent-hint .clock {
+  font-size: 20px;
+  font-weight: bold;
+  color: #fbbf24;
+  font-family: 'Courier New', monospace;
+}
+.agent-hint .elapsed {
+  font-size: 14px;
+  color: #22c55e;
+  font-family: 'Courier New', monospace;
+  margin-top: 4px;
+}
+.agent-hint .elapsed-label {
+  font-size: 10px;
+  color: #52525b;
+}
+.footer {
+  text-align: center;
+  font-size: 12px;
+  color: #52525b;
+  padding: 20px 0;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>🍽️ 上菜 Checklist</h1>
+    <div class="subtitle">HIS Tools</div>
+  </div>
+  <div class="header-right">
+    <label>枱號</label>
+    <input type="text" id="tableNo" placeholder="31A" value="">
+    <label>落單</label>
+    <input type="time" id="orderTime" value="">
+  </div>
+</div>
+
+<div class="agent-hint">
+  <div class="left">
+    <strong>🤖 Agent 指令：</strong><br>
+    <strong>J04</strong> + 餐單相 → 認枱號、認菜式，自動更新模板<br>
+    <strong>J04</strong> + 食物相 → 認食物，標記已上，自動更新模板<br>
+    <strong>J04: clear</strong> → 清空模板<br>
+    <span style="color:#52525b">更新後按「🗑️ 重置」載入最新模板</span>
+  </div>
+  <div class="right">
+    <div class="clock" id="currentTime">--:--:--</div>
+    <div class="elapsed-label">已用餐</div>
+    <div class="elapsed" id="elapsedTime">00:00:00</div>
+  </div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-box waiting">
+    <div class="num" id="waitCount">0</div>
+    <div class="label">未上</div>
+  </div>
+  <div class="stat-box served">
+    <div class="num" id="servedCount">0</div>
+    <div class="label">已上</div>
+  </div>
+  <div class="stat-box total">
+    <div class="num" id="totalAmount">$0</div>
+    <div class="label">總金額</div>
+  </div>
+</div>
+
+<div class="add-form">
+  <h3>➕ 新增食物</h3>
+  <div class="add-inputs">
+    <input type="text" name="name" placeholder="食物名稱" id="newName">
+    <input type="number" name="price" placeholder="價錢" id="newPrice" min="0">
+  </div>
+  <button class="add-btn" onclick="addItem()">加入清單</button>
+</div>
+
+<div class="food-list" id="foodList">
+  <div class="empty-state">
+    <div class="icon">🍜</div>
+    <p>仲未有食物，喺上面加入啦！</p>
+  </div>
+</div>
+
+<div class="action-buttons">
+  <button class="action-btn reset" onclick="resetAll()">🗑️ 重置</button>
+</div>
+
+<div class="footer">
+  HIS Tools © 2026.1.00 · 數據儲存於本地瀏覽器
+</div>
+
+<script>
+let items = [];
+let tableNo = '';
+let orderTime = '';
+
+// 內置預設數據（file:// 本地打開時用）
+const DEFAULT_DATA = {
+  items: [
+    {id: 1, name: "炙燒黑椒蠔", price: 10, status: "waiting", servedTime: null},
+    {id: 2, name: "北海道巨大L Size珍寶帆立貝", price: 21, status: "waiting", servedTime: null},
+    {id: 3, name: "辣味三文魚", price: 17, status: "waiting", servedTime: null},
+    {id: 4, name: "牛肉烏冬", price: 32, status: "waiting", servedTime: null},
+    {id: 5, name: "元氣卷", price: 22, status: "waiting", servedTime: null},
+    {id: 6, name: "三文魚籽", price: 17, status: "waiting", servedTime: null},
+    {id: 7, name: "海膽墨魚", price: 17, status: "waiting", servedTime: null},
+    {id: 8, name: "蔥香脆蒜海鮮", price: 14, status: "waiting", servedTime: null},
+    {id: 9, name: "北海道巨大L Size珍寶帆立貝 x2", price: 42, status: "waiting", servedTime: null},
+    {id: 10, name: "辛辣吞拿魚蔥花卷", price: 14, status: "waiting", servedTime: null}
+  ],
+  tableNo: "",
+  orderTime: ""
+};
+
+// 從 JSON 模板載入預設數據（http/https 環境先用到）
+async function loadFromJson() {
+  // 先用內置預設
+  items = [...DEFAULT_DATA.items];
+  tableNo = DEFAULT_DATA.tableNo;
+  orderTime = DEFAULT_DATA.orderTime;
+  
+  // 嘗試 fetch 外部 JSON（GitHub Pages 先成功）
+  if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
+    try {
+      const response = await fetch('food-data.json?t=' + Date.now());
+      if (response.ok) {
+        const data = await response.json();
+        items = data.items || items;
+        tableNo = data.tableNo || tableNo;
+        orderTime = data.orderTime || orderTime;
+        return true;
+      }
+    } catch (e) {
+      console.log('無法讀取 food-data.json，使用內置預設');
+    }
+  }
+  return false;
+}
+
+// 載入數據：優先 localStorage，冇就讀 JSON 模板
+async function loadData() {
+  const saved = localStorage.getItem('foodArrivalData');
+  if (saved) {
+    const data = JSON.parse(saved);
+    items = data.items || [];
+    tableNo = data.tableNo || '';
+    orderTime = data.orderTime || '';
+  } else {
+    await loadFromJson();
+    // 第一次讀取後，存入 localStorage
+    saveData();
+  }
+  document.getElementById('tableNo').value = tableNo;
+  document.getElementById('orderTime').value = orderTime;
+  if (!orderTime) {
+    const now = new Date();
+    orderTime = now.toTimeString().slice(0, 5);
+    document.getElementById('orderTime').value = orderTime;
+  }
+  render();
+}
+
+// 儲存到本地
+function saveData() {
+  localStorage.setItem('foodArrivalData', JSON.stringify({
+    items, tableNo, orderTime
+  }));
+}
+
+// 新增項目
+function addItem() {
+  const name = document.getElementById('newName').value.trim();
+  const price = parseFloat(document.getElementById('newPrice').value) || 0;
+  if (!name) {
+    alert('請輸入食物名稱');
+    return;
+  }
+  items.push({
+    id: Date.now(),
+    name,
+    price,
+    status: 'waiting',
+    servedTime: null
+  });
+  document.getElementById('newName').value = '';
+  document.getElementById('newPrice').value = '';
+  saveData();
+  render();
+}
+
+// 切換狀態
+function toggleItem(id) {
+  const item = items.find(i => i.id === id);
+  if (item) {
+    if (item.status === 'waiting') {
+      item.status = 'served';
+      item.servedTime = new Date().toISOString();
+    } else {
+      item.status = 'waiting';
+      item.servedTime = null;
+    }
+    saveData();
+    render();
+  }
+}
+
+// 刪除項目
+function deleteItem(id, event) {
+  event.stopPropagation();
+  if (confirm('確定刪除呢項？')) {
+    items = items.filter(i => i.id !== id);
+    saveData();
+    render();
+  }
+}
+
+// 計算等候時間
+function getWaitTime(item) {
+  if (!orderTime) return '';
+  const now = new Date();
+  const [h, m] = orderTime.split(':').map(Number);
+  const order = new Date();
+  order.setHours(h, m, 0, 0);
+  const diff = Math.floor((now - order) / 60000);
+  if (diff < 0) return '未到落單時間';
+  if (diff < 60) return `已等 ${diff} 分鐘`;
+  const hrs = Math.floor(diff / 60);
+  const mins = diff % 60;
+  return `已等 ${hrs} 小時 ${mins} 分鐘`;
+}
+
+// 渲染
+function render() {
+  const list = document.getElementById('foodList');
+  const waiting = items.filter(i => i.status === 'waiting');
+  const served = items.filter(i => i.status === 'served');
+  const total = items.reduce((sum, i) => sum + (i.price || 0), 0);
+
+  document.getElementById('waitCount').textContent = waiting.length;
+  document.getElementById('servedCount').textContent = served.length;
+  document.getElementById('totalAmount').textContent = '$' + total;
+
+  if (items.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <div class="icon">🍜</div>
+        <p>仲未有食物，喺上面加入啦！</p>
+      </div>
+    `;
+    return;
+  }
+
+  list.innerHTML = items.map(item => {
+    const meta = item.status === 'waiting'
+      ? `<span class="wait-time">${getWaitTime(item)}</span>`
+      : `<span class="served-time">上菜時間：${item.servedTime ? new Date(item.servedTime).toLocaleTimeString('zh-HK', {hour:'2-digit', minute:'2-digit'}) : '-'}</span>`;
+    return `
+      <div class="food-item ${item.status}" onclick="toggleItem(${item.id})">
+        <button class="delete-btn" onclick="deleteItem(${item.id}, event)">×</button>
+        <div class="info">
+          <div class="name">${item.name}<span class="price">$${item.price}</span></div>
+          <div class="meta">${meta}</div>
+        </div>
+        <div class="status">${item.status === 'waiting' ? '未上' : '已上 ✓'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+// 全部重置：清除 localStorage，重新讀取 JSON 模板
+async function resetAll() {
+  if (confirm('確定重置？會清除本地記錄，重新載入 JSON 模板。')) {
+    localStorage.removeItem('foodArrivalData');
+    await loadData();
+  }
+}
+
+// 匯出清單
+function exportData() {
+  const waiting = items.filter(i => i.status === 'waiting');
+  const served = items.filter(i => i.status === 'served');
+  let text = `🍽️ 上菜 Checklist\n`;
+  text += `枱號：${tableNo || '未設定'}｜落單時間：${orderTime || '未設定'}\n`;
+  text += `━━━━━━━━━━━━━━━━\n`;
+  text += `✅ 已上 (${served.length}項)：\n`;
+  served.forEach(i => text += `  ✓ ${i.name}\n`);
+  text += `\n⏳ 未上 (${waiting.length}項)：\n`;
+  waiting.forEach(i => text += `  ⏳ ${i.name}\n`);
+  text += `━━━━━━━━━━━━━━━━\n`;
+  text += `總金額：$${items.reduce((s,i) => s+(i.price||0), 0)}`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    alert('已複製到剪貼簿！');
+  }).catch(() => {
+    prompt('複製以下內容：', text);
+  });
+}
+
+// 設定變更時儲存
+document.getElementById('tableNo').addEventListener('input', e => {
+  tableNo = e.target.value;
+  saveData();
+});
+document.getElementById('orderTime').addEventListener('change', e => {
+  orderTime = e.target.value;
+  saveData();
+  render();
+  updateClocks();
+});
+
+// Enter 鍵新增
+document.getElementById('newName').addEventListener('keypress', e => {
+  if (e.key === 'Enter') addItem();
+});
+document.getElementById('newPrice').addEventListener('keypress', e => {
+  if (e.key === 'Enter') addItem();
+});
+
+// 每30秒更新等候時間
+setInterval(render, 30000);
+
+// 更新時鐘
+function updateClocks() {
+  const now = new Date();
+  // 現在時間
+  const hh = now.getHours().toString().padStart(2, '0');
+  const mm = now.getMinutes().toString().padStart(2, '0');
+  const ss = now.getSeconds().toString().padStart(2, '0');
+  document.getElementById('currentTime').textContent = `${hh}:${mm}:${ss}`;
+  
+  // 已用餐時間（從落單時間計算）
+  if (orderTime) {
+    const [oh, om] = orderTime.split(':').map(Number);
+    const orderDate = new Date();
+    orderDate.setHours(oh, om, 0, 0);
+    let diff = Math.floor((now - orderDate) / 1000);
+    if (diff < 0) diff += 86400; // 跨日處理
+    const eh = Math.floor(diff / 3600).toString().padStart(2, '0');
+    const em = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
+    const es = (diff % 60).toString().padStart(2, '0');
+    document.getElementById('elapsedTime').textContent = `${eh}:${em}:${es}`;
+  } else {
+    document.getElementById('elapsedTime').textContent = '00:00:00';
+  }
+}
+
+// 每秒更新時鐘
+setInterval(updateClocks, 1000);
+updateClocks();
+
+// 初始化
+loadData();
+</script>
+</body>
+</html>
