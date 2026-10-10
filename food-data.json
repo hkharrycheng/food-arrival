@@ -27,6 +27,16 @@
         {"name": "鹽燒脂香秋刀魚", "qty": 1, "price": 15, "served": true},
         {"name": "銀會員", "qty": 1, "price": 0, "served": false}
       ]
+    },
+    {
+      "orderTime": "20:21",
+      "items": [
+        {"name": "甜玉米", "qty": 1, "price": 12, "served": false},
+        {"name": "四色海鮮手卷(三文魚、吞拿魚蓉、小柱及三文魚籽)", "qty": 1, "price": 20, "served": false},
+        {"name": "鹽蔥拖羅", "qty": 1, "price": 23, "served": false},
+        {"name": "蔥香脆蒜海鮮", "qty": 1, "price": 16, "served": false},
+        {"name": "迷你泡芙", "qty": 1, "price": 18, "served": false}
+      ]
     }
   ]
 }
