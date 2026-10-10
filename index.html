@@ -488,8 +488,8 @@ const DEFAULT_DATA = {
     {id: 9, name: "北海道巨大L Size珍寶帆立貝 x2", price: 42, status: "waiting", servedTime: null, orderTime: "19:45"},
     {id: 10, name: "辛辣吞拿魚蔥花卷", price: 14, status: "waiting", servedTime: null, orderTime: "19:45"}
   ],
-  tableNo: "31A",
-  orderTime: "18:28" // 預設下單時間（新增食物時用）
+  tableNo: "",
+  orderTime: "" // 預設下單時間（新增食物時用）
 };
 
 // 從 JSON 模板載入預設數據（http/https 環境先用到）
@@ -759,9 +759,24 @@ function render() {
 
 // 全部重置：清除 localStorage，重新讀取 JSON 模板
 async function resetAll() {
-  if (confirm('確定重置？會清除本地記錄，重新載入 JSON 模板。')) {
-    localStorage.removeItem('foodArrivalData');
-    await loadData();
+  localStorage.removeItem('foodArrivalData');
+  await loadFromJson();
+  saveData();
+  document.getElementById('tableNo').value = tableNo;
+  document.getElementById('orderTime').value = orderTime;
+  render();
+  // 提示用戶
+  const btn = document.querySelector('.reset');
+  if (btn) {
+    const originalText = btn.textContent;
+    btn.textContent = '✅ 已重新載入';
+    btn.style.background = '#16a34a';
+    btn.style.color = 'white';
+    setTimeout(() => {
+      btn.textContent = originalText;
+      btn.style.background = '';
+      btn.style.color = '';
+    }, 2000);
   }
 }
 
