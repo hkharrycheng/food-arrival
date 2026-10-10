@@ -1,42 +1,27 @@
 {
   "tableNo": "62F",
-  "restaurant": "元気寿司",
-  "orders": [
-    {
-      "orderTime": "19:52",
-      "items": [
-        {"name": "玉子", "qty": 1, "price": 12, "served": true},
-        {"name": "牛油果卷", "qty": 1, "price": 12, "served": true},
-        {"name": "蛋沙律", "qty": 1, "price": 12, "served": true},
-        {"name": "月見雪國舞茸壽喜燒牛煮軍艦", "qty": 1, "price": 15, "served": true},
-        {"name": "厚燒玉子(芝士味)", "qty": 1, "price": 14, "served": true},
-        {"name": "特長吉列芝士條(松露風味)", "qty": 1, "price": 19, "served": true},
-        {"name": "大阪章魚燒", "qty": 1, "price": 29, "served": true}
-      ]
-    },
-    {
-      "orderTime": "19:53",
-      "items": [
-        {"name": "蒲燒三文魚腩", "qty": 1, "price": 12, "served": true},
-        {"name": "炭烤雞爽肉", "qty": 1, "price": 12, "served": true},
-        {"name": "蒜香牛油燒魷魚", "qty": 1, "price": 12, "served": true},
-        {"name": "蟹皇手卷", "qty": 1, "price": 22, "served": true},
-        {"name": "三文魚煙燻大根他他脆海苔", "qty": 1, "price": 19, "served": true},
-        {"name": "炙燒鹽蔥帆立貝", "qty": 1, "price": 16, "served": true},
-        {"name": "煙燻醬油鰹魚", "qty": 1, "price": 16, "served": true},
-        {"name": "鹽燒脂香秋刀魚", "qty": 1, "price": 15, "served": true},
-        {"name": "銀會員", "qty": 1, "price": 0, "served": false}
-      ]
-    },
-    {
-      "orderTime": "20:21",
-      "items": [
-        {"name": "甜玉米", "qty": 1, "price": 12, "served": false},
-        {"name": "四色海鮮手卷(三文魚、吞拿魚蓉、小柱及三文魚籽)", "qty": 1, "price": 20, "served": false},
-        {"name": "鹽蔥拖羅", "qty": 1, "price": 23, "served": false},
-        {"name": "蔥香脆蒜海鮮", "qty": 1, "price": 16, "served": false},
-        {"name": "迷你泡芙", "qty": 1, "price": 18, "served": false}
-      ]
-    }
+  "orderTime": "19:52",
+  "items": [
+    {"id": 1, "name": "玉子", "qty": 1, "price": 12, "status": "served", "orderTime": "19:52"},
+    {"id": 2, "name": "牛油果卷", "qty": 1, "price": 12, "status": "served", "orderTime": "19:52"},
+    {"id": 3, "name": "蛋沙律", "qty": 1, "price": 12, "status": "served", "orderTime": "19:52"},
+    {"id": 4, "name": "月見雪國舞茸壽喜燒牛煮軍艦", "qty": 1, "price": 15, "status": "served", "orderTime": "19:52"},
+    {"id": 5, "name": "厚燒玉子(芝士味)", "qty": 1, "price": 14, "status": "served", "orderTime": "19:52"},
+    {"id": 6, "name": "特長吉列芝士條(松露風味)", "qty": 1, "price": 19, "status": "served", "orderTime": "19:52"},
+    {"id": 7, "name": "大阪章魚燒", "qty": 1, "price": 29, "status": "served", "orderTime": "19:52"},
+    {"id": 8, "name": "蒲燒三文魚腩", "qty": 1, "price": 12, "status": "served", "orderTime": "19:53"},
+    {"id": 9, "name": "炭烤雞爽肉", "qty": 1, "price": 12, "status": "served", "orderTime": "19:53"},
+    {"id": 10, "name": "蒜香牛油燒魷魚", "qty": 1, "price": 12, "status": "served", "orderTime": "19:53"},
+    {"id": 11, "name": "蟹皇手卷", "qty": 1, "price": 22, "status": "served", "orderTime": "19:53"},
+    {"id": 12, "name": "三文魚煙燻大根他他脆海苔", "qty": 1, "price": 19, "status": "served", "orderTime": "19:53"},
+    {"id": 13, "name": "炙燒鹽蔥帆立貝", "qty": 1, "price": 16, "status": "served", "orderTime": "19:53"},
+    {"id": 14, "name": "煙燻醬油鰹魚", "qty": 1, "price": 16, "status": "served", "orderTime": "19:53"},
+    {"id": 15, "name": "鹽燒脂香秋刀魚", "qty": 1, "price": 15, "status": "served", "orderTime": "19:53"},
+    {"id": 16, "name": "銀會員", "qty": 1, "price": 0, "status": "waiting", "orderTime": "19:53"},
+    {"id": 17, "name": "甜玉米", "qty": 1, "price": 12, "status": "waiting", "orderTime": "20:21"},
+    {"id": 18, "name": "四色海鮮手卷(三文魚、吞拿魚蓉、小柱及三文魚籽)", "qty": 1, "price": 20, "status": "waiting", "orderTime": "20:21"},
+    {"id": 19, "name": "鹽蔥拖羅", "qty": 1, "price": 23, "status": "waiting", "orderTime": "20:21"},
+    {"id": 20, "name": "蔥香脆蒜海鮮", "qty": 1, "price": 16, "status": "waiting", "orderTime": "20:21"},
+    {"id": 21, "name": "迷你泡芙", "qty": 1, "price": 18, "status": "waiting", "orderTime": "20:21"}
   ]
 }
