@@ -392,6 +392,68 @@ body {
   color: #52525b;
   padding: 20px 0;
 }
+
+  /* ===== 上傳GitHub模態面板 ===== */
+  .action-btn.upload {
+    background: rgba(63, 185, 80, 0.15);
+    color: #3fb950;
+    border-color: rgba(63, 185, 80, 0.3);
+  }
+  .action-btn.upload:hover {
+    background: rgba(63, 185, 80, 0.3);
+  }
+  .modal-overlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.7); z-index: 1000;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-panel {
+    background: #161b22; border: 1px solid #30363d;
+    border-radius: 16px; width: 100%; max-width: 400px;
+    overflow: hidden;
+  }
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 16px 20px; border-bottom: 1px solid #30363d;
+  }
+  .modal-header h3 { margin: 0; font-size: 18px; }
+  .modal-close {
+    background: none; border: none; color: #8b949e;
+    font-size: 24px; cursor: pointer; padding: 0; line-height: 1;
+  }
+  .modal-body { padding: 20px; }
+  .upload-info {
+    background: #0d1117; border-radius: 8px; padding: 12px;
+    margin-bottom: 16px; font-size: 13px; color: #8b949e;
+  }
+  .upload-info p { margin: 4px 0; }
+  .upload-info strong { color: #e6edf3; }
+  .form-group label {
+    display: block; font-size: 13px; color: #8b949e; margin-bottom: 8px;
+  }
+  .form-group input {
+    width: 100%; padding: 12px; background: #0d1117;
+    border: 1px solid #30363d; border-radius: 8px;
+    color: #e6edf3; font-size: 14px; box-sizing: border-box;
+  }
+  .form-group input:focus { border-color: #388bfd; outline: none; }
+  .hint { font-size: 11px; color: #484f58; margin-top: 6px; }
+  .modal-footer {
+    display: flex; gap: 10px; padding: 16px 20px;
+    border-top: 1px solid #30363d;
+  }
+  .modal-btn {
+    flex: 1; padding: 12px; border: none; border-radius: 8px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+  }
+  .modal-btn.cancel {
+    background: #21262d; color: #8b949e;
+  }
+  .modal-btn.confirm {
+    background: #1f6feb; color: white;
+  }
+  .modal-btn.confirm:hover { background: #1a5fd0; }
 </style>
 </head>
 <body>
@@ -458,11 +520,38 @@ body {
 </div>
 
 <div class="action-buttons">
-  <button class="action-btn reset" onclick="resetAll()">🗑️ 重置</button>
+  <button class="action-btn reset" onclick="resetAll()">⬇️ 下載Github</button>
+  <button class="action-btn upload" onclick="openUploadModal()">☁️ 上傳GitHub</button>
+</div>
+
+<!-- 上傳GitHub模態面板 -->
+<div id="uploadModal" class="modal-overlay" style="display:none;">
+  <div class="modal-panel">
+    <div class="modal-header">
+      <h3>☁️ 上傳到GitHub</h3>
+      <button class="modal-close" onclick="closeUploadModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="upload-info">
+        <p><strong>倉庫：</strong>hkharrycheng/food-arrival</p>
+        <p><strong>文件：</strong>food-data.json</p>
+        <p><strong>數據：</strong><span id="uploadCount">載入中...</span></p>
+      </div>
+      <div class="form-group">
+        <label for="githubToken">GitHub Personal Access Token</label>
+        <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
+        <p class="hint">Token只用於本次上傳，唔會儲存</p>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-btn cancel" onclick="closeUploadModal()">取消</button>
+      <button class="modal-btn confirm" onclick="uploadToGitHub()">確認上傳</button>
+    </div>
+  </div>
 </div>
 
 <div class="footer">
-  HIS Tools © 2026.1.01 · 數據儲存於本地瀏覽器
+  HIS Tools © 2026.1.02 · 數據儲存於本地瀏覽器
 </div>
 
 <script>
@@ -488,8 +577,8 @@ const DEFAULT_DATA = {
     {id: 9, name: "北海道巨大L Size珍寶帆立貝 x2", price: 42, status: "waiting", servedTime: null, orderTime: "19:45"},
     {id: 10, name: "辛辣吞拿魚蔥花卷", price: 14, status: "waiting", servedTime: null, orderTime: "19:45"}
   ],
-  tableNo: "",
-  orderTime: "" // 預設下單時間（新增食物時用）
+  tableNo: "31A",
+  orderTime: "18:28" // 預設下單時間（新增食物時用）
 };
 
 // 從 JSON 模板載入預設數據（http/https 環境先用到）
@@ -759,24 +848,34 @@ function render() {
 
 // 全部重置：清除 localStorage，重新讀取 JSON 模板
 async function resetAll() {
-  localStorage.removeItem('foodArrivalData');
-  await loadFromJson();
-  saveData();
-  document.getElementById('tableNo').value = tableNo;
-  document.getElementById('orderTime').value = orderTime;
-  render();
-  // 提示用戶
-  const btn = document.querySelector('.reset');
-  if (btn) {
-    const originalText = btn.textContent;
-    btn.textContent = '✅ 已重新載入';
-    btn.style.background = '#16a34a';
-    btn.style.color = 'white';
-    setTimeout(() => {
-      btn.textContent = originalText;
-      btn.style.background = '';
-      btn.style.color = '';
-    }, 2000);
+  if (confirm('確定從GitHub下載最新數據？會覆蓋本地記錄。')) {
+    localStorage.removeItem('foodArrivalData');
+    // 優先從GitHub加載最新food-data.json
+    const githubUrl = 'https://raw.githubusercontent.com/hkharrycheng/food-arrival/main/food-data.json?t=' + Date.now();
+    try {
+      const resp = await fetch(githubUrl);
+      if (resp.ok) {
+        const data = await resp.json();
+        items = data.items || [];
+        tableNo = data.tableNo || '';
+        orderTime = data.orderTime || '';
+        collapsedGroups = data.collapsedGroups || {};
+        items.forEach(item => {
+          if (!item.orderTime) item.orderTime = orderTime;
+        });
+        saveData();
+        document.getElementById('tableNo').value = tableNo;
+        document.getElementById('orderTime').value = orderTime;
+        renderItems();
+        updateStats();
+        alert('✅ 已從GitHub載入最新數據（' + items.length + '項）');
+        return;
+      }
+    } catch(e) {
+      console.log('GitHub載入失敗，使用本地模板:', e);
+    }
+    // fallback：本地模板
+    await loadData();
   }
 }
 
@@ -857,6 +956,99 @@ updateClocks();
 
 // 初始化
 loadData();
+
+// ===== 上傳到GitHub =====
+function openUploadModal() {
+  const saved = localStorage.getItem('foodArrivalData');
+  let count = 0;
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+      count = data.items ? data.items.length : 0;
+    } catch(e) {}
+  }
+  document.getElementById('uploadCount').textContent = count + ' 項食物';
+  document.getElementById('uploadModal').style.display = 'flex';
+  document.getElementById('githubToken').value = '';
+  document.getElementById('githubToken').focus();
+}
+
+function closeUploadModal() {
+  document.getElementById('uploadModal').style.display = 'none';
+}
+
+async function uploadToGitHub() {
+  const token = document.getElementById('githubToken').value.trim();
+  if (!token) {
+    alert('⚠️ 請輸入GitHub Token');
+    return;
+  }
+  
+  const saved = localStorage.getItem('foodArrivalData');
+  if (!saved) {
+    alert('⚠️ 冇數據可上傳');
+    return;
+  }
+  
+  const btn = document.querySelector('.modal-btn.confirm');
+  btn.textContent = '上傳中...';
+  btn.disabled = true;
+  
+  try {
+    const content = btoa(unescape(encodeURIComponent(saved)));
+    const repo = 'hkharrycheng/food-arrival';
+    const path = 'food-data.json';
+    
+    // 先獲取文件sha
+    let sha = null;
+    try {
+      const resp = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+        headers: { 'Authorization': `token ${token}` }
+      });
+      if (resp.ok) {
+        const fileData = await resp.json();
+        sha = fileData.sha;
+      }
+    } catch(e) {}
+    
+    // 上傳
+    const body = {
+      message: `更新food-data.json (${new Date().toLocaleString('zh-HK')})`,
+      content: content,
+      branch: 'main'
+    };
+    if (sha) body.sha = sha;
+    
+    const resp = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `token ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    
+    if (resp.ok) {
+      alert('✅ 上傳成功！\n\n文件已更新到：\nhttps://github.com/hkharrycheng/food-arrival/blob/main/food-data.json');
+      closeUploadModal();
+    } else {
+      const err = await resp.json();
+      alert(`❌ 上傳失敗：${err.message || resp.status}`);
+    }
+  } catch(e) {
+    alert(`❌ 錯誤：${e.message}`);
+  } finally {
+    btn.textContent = '確認上傳';
+    btn.disabled = false;
+  }
+}
+
+// 點擊模態背景關閉
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'uploadModal') {
+    closeUploadModal();
+  }
+});
 </script>
 </body>
 </html>
