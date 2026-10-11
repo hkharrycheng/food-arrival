@@ -454,6 +454,14 @@ body {
     background: #1f6feb; color: white;
   }
   .modal-btn.confirm:hover { background: #1a5fd0; }
+  .action-btn.clear {
+    background: rgba(248, 81, 73, 0.15);
+    color: #f85149;
+    border-color: rgba(248, 81, 73, 0.3);
+  }
+  .action-btn.clear:hover {
+    background: rgba(248, 81, 73, 0.3);
+  }
 </style>
 </head>
 <body>
@@ -520,6 +528,7 @@ body {
 </div>
 
 <div class="action-buttons">
+  <button class="action-btn clear" onclick="clearAll()">🗑️ 清空</button>
   <button class="action-btn reset" onclick="resetAll()">⬇️ 下載Github</button>
   <button class="action-btn upload" onclick="openUploadModal()">☁️ 上傳GitHub</button>
 </div>
@@ -551,7 +560,7 @@ body {
 </div>
 
 <div class="footer">
-  HIS Tools © 2026.1.02 · 數據儲存於本地瀏覽器
+  HIS Tools © 2026.1.03 · 數據儲存於本地瀏覽器
 </div>
 
 <script>
@@ -847,6 +856,20 @@ function render() {
 }
 
 // 全部重置：清除 localStorage，重新讀取 JSON 模板
+function clearAll() {
+  if (confirm('確定清空所有數據？會清除菜式、枱號、下單時間。')) {
+    items = [];
+    tableNo = '';
+    orderTime = '';
+    collapsedGroups = {};
+    saveData();
+    document.getElementById('tableNo').value = '';
+    document.getElementById('orderTime').value = '';
+    renderItems();
+    updateStats();
+  }
+}
+
 async function resetAll() {
   if (confirm('確定從GitHub下載最新數據？會覆蓋本地記錄。')) {
     localStorage.removeItem('foodArrivalData');
@@ -995,21 +1018,34 @@ async function uploadToGitHub() {
   btn.disabled = true;
   
   try {
+    // 可靠的base64編碼（支援中文）
     const content = btoa(unescape(encodeURIComponent(saved)));
     const repo = 'hkharrycheng/food-arrival';
     const path = 'food-data.json';
+    const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
+    const ghHeaders = {
+      'Authorization': `token ${token}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    };
+    
+    console.log('開始上傳到GitHub...');
     
     // 先獲取文件sha
     let sha = null;
     try {
-      const resp = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
-        headers: { 'Authorization': `token ${token}` }
-      });
-      if (resp.ok) {
-        const fileData = await resp.json();
+      const getResp = await fetch(apiUrl, { headers: ghHeaders });
+      console.log('獲取文件狀態:', getResp.status);
+      if (getResp.ok) {
+        const fileData = await getResp.json();
         sha = fileData.sha;
+        console.log('文件存在，sha:', sha.substring(0,7));
+      } else {
+        console.log('文件唔存在，將新建');
       }
-    } catch(e) {}
+    } catch(e) {
+      console.log('獲取文件失敗:', e);
+    }
     
     // 上傳
     const body = {
@@ -1019,24 +1055,29 @@ async function uploadToGitHub() {
     };
     if (sha) body.sha = sha;
     
-    const resp = await fetch(`https://api.github.com/repos/${repo}/contents/${path}`, {
+    const resp = await fetch(apiUrl, {
       method: 'PUT',
-      headers: {
-        'Authorization': `token ${token}`,
-        'Content-Type': 'application/json'
-      },
+      headers: ghHeaders,
       body: JSON.stringify(body)
     });
+    
+    console.log('上傳狀態:', resp.status);
     
     if (resp.ok) {
       alert('✅ 上傳成功！\n\n文件已更新到：\nhttps://github.com/hkharrycheng/food-arrival/blob/main/food-data.json');
       closeUploadModal();
     } else {
-      const err = await resp.json();
-      alert(`❌ 上傳失敗：${err.message || resp.status}`);
+      let errMsg = resp.status + ' ' + resp.statusText;
+      try {
+        const err = await resp.json();
+        errMsg = err.message || errMsg;
+        if (err.errors) errMsg += '\n' + JSON.stringify(err.errors);
+      } catch(e) {}
+      alert(`❌ 上傳失敗：${errMsg}\n\n請檢查：\n1. Token是否正確\n2. Token是否有repo權限\n3. 按F12睇Console詳細錯誤`);
     }
   } catch(e) {
-    alert(`❌ 錯誤：${e.message}`);
+    console.error('上傳錯誤:', e);
+    alert(`❌ 錯誤：${e.message}\n\n可能係CORS或網絡問題，請檢查Console`);
   } finally {
     btn.textContent = '確認上傳';
     btn.disabled = false;
