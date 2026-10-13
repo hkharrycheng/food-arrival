@@ -1,2254 +1,1103 @@
 <!DOCTYPE html>
-
 <html lang="zh-Hant">
-
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>🍽️ 上菜 Checklist - HIS Tools</title>
-
+<title>上菜 Checklist - HIS Tools</title>
 <style>
-
 * { box-sizing: border-box; margin: 0; padding: 0; }
-
 body {
-
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-
   background: #0f1117;
-
   color: #e4e4e7;
-
   min-height: 100vh;
-
   padding: 16px;
-
   max-width: 600px;
-
   margin: 0 auto;
-
 }
-
 .header {
-
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
   margin-bottom: 12px;
-
 }
-
+.header-left { display: flex; align-items: center; gap: 10px; }
 .header-left h1 {
-
   font-size: 20px;
-
   color: #fbbf24;
-
 }
-
 .header-left .subtitle {
-
   font-size: 11px;
-
   color: #71717a;
-
 }
-
 .header-right {
-
   display: flex;
-
   gap: 6px;
-
   align-items: center;
-
   flex-wrap: wrap;
-
   justify-content: flex-end;
-
 }
-
 .header-right label {
-
   font-size: 11px;
-
   color: #a1a1aa;
-
 }
-
 .header-right input {
-
   background: #0f1117;
-
   border: 1px solid #3f3f46;
-
   border-radius: 6px;
-
   padding: 6px 8px;
-
   color: #e4e4e7;
-
   font-size: 13px;
-
   width: 60px;
-
 }
-
 .header-right input[type="time"] {
-
   width: 120px;
-
 }
-
 .add-order-btn {
-
   background: #22c55e;
-
   color: white;
-
   border: none;
-
   border-radius: 6px;
-
   padding: 6px 10px;
-
   font-size: 11px;
-
   font-weight: bold;
-
   cursor: pointer;
-
   white-space: nowrap;
-
 }
-
 .add-order-btn:hover {
-
   background: #16a34a;
-
 }
-
 .header-right input:focus {
-
   outline: none;
-
   border-color: #fbbf24;
-
 }
-
 .stats-bar {
-
   display: flex;
-
   gap: 10px;
-
   margin-bottom: 16px;
-
 }
-
 .stat-box {
-
   flex: 1;
-
   background: #1a1d27;
-
   border-radius: 12px;
-
   padding: 14px;
-
   text-align: center;
-
   border: 1px solid #27272a;
-
 }
-
 .stat-box .num {
-
   font-size: 28px;
-
   font-weight: bold;
-
 }
-
 .stat-box.waiting .num { color: #fbbf24; }
-
 .stat-box.served .num { color: #22c55e; }
-
 .stat-box.total .num { color: #60a5fa; }
-
 .stat-box .label {
-
   font-size: 12px;
-
   color: #71717a;
-
   margin-top: 2px;
-
 }
-
 .add-form {
-
   background: #1a1d27;
-
   border-radius: 12px;
-
   padding: 14px;
-
   margin-bottom: 16px;
-
   border: 1px solid #27272a;
-
 }
-
 .add-form h3 {
-
   font-size: 14px;
-
   color: #a1a1aa;
-
   margin-bottom: 10px;
-
 }
-
 .add-inputs {
-
   display: flex;
-
   gap: 8px;
-
 }
-
 .add-inputs input {
-
   box-sizing: border-box;
-
   min-width: 0;
-
 }
-
 .add-inputs input[name="name"] {
-
   flex: 2;
-
   background: #0f1117;
-
   border: 1px solid #3f3f46;
-
   border-radius: 8px;
-
   padding: 10px;
-
   color: #e4e4e7;
-
   font-size: 14px;
-
 }
-
 .add-inputs input[name="price"] {
-
   flex: 1;
-
   background: #0f1117;
-
   border: 1px solid #3f3f46;
-
   border-radius: 8px;
-
   padding: 10px;
-
   color: #e4e4e7;
-
   font-size: 14px;
-
 }
-
 .add-inputs input:focus {
-
   outline: none;
-
   border-color: #fbbf24;
-
 }
-
 .add-btn {
-
   width: 100%;
-
   margin-top: 10px;
-
   padding: 12px;
-
   background: #fbbf24;
-
   color: #0f1117;
-
   border: none;
-
   border-radius: 8px;
-
   font-size: 15px;
-
   font-weight: 600;
-
   cursor: pointer;
-
 }
-
 .add-btn:active { opacity: 0.8; }
-
 .food-list {
-
   margin-bottom: 16px;
-
 }
-
 /* 分次下單分組 */
-
 .order-group {
-
   margin-bottom: 20px;
-
 }
-
 .order-group-header {
-
   display: flex;
-
   align-items: center;
-
   gap: 10px;
-
   padding: 10px 12px;
-
   background: linear-gradient(135deg, #1e293b, #0f172a);
-
   border-radius: 8px;
-
   margin-bottom: 10px;
-
   border-left: 3px solid #fbbf24;
-
   cursor: pointer;
-
   user-select: none;
-
   transition: all 0.2s;
-
 }
-
 .order-group-header:hover {
-
   background: linear-gradient(135deg, #334155, #1e293b);
-
 }
-
 /* 收合狀態：只改透明度，唔改顏色 */
-
 .order-group.collapsed .order-group-header {
-
   opacity: 0.7;
-
 }
-
 /* 全上狀態：綠色 */
-
 .order-group.all-served .order-group-header {
-
   border-left-color: #22c55e;
-
 }
-
 .order-group.all-served .order-batch {
-
   color: #22c55e;
-
 }
-
 .order-group.all-served .order-time-badge {
-
   background: #22c55e;
-
 }
-
 .collapse-icon {
-
   font-size: 10px;
-
   color: #71717a;
-
   width: 12px;
-
   text-align: center;
-
 }
-
 .order-batch {
-
   font-weight: bold;
-
   color: #fbbf24;
-
   font-size: 13px;
-
 }
-
 .order-time-badge {
-
   background: #fbbf24;
-
   color: #0f172a;
-
   padding: 2px 8px;
-
   border-radius: 10px;
-
   font-size: 12px;
-
   font-weight: bold;
-
 }
-
 .order-group-stats {
-
   margin-left: auto;
-
   font-size: 11px;
-
   color: #71717a;
-
 }
-
 .all-served-badge {
-
   background: #22c55e;
-
   color: white;
-
   padding: 2px 6px;
-
   border-radius: 8px;
-
   font-size: 10px;
-
   font-weight: bold;
-
 }
-
 .order-group-content {
-
   animation: slideDown 0.2s ease-out;
-
 }
-
 @keyframes slideDown {
-
   from { opacity: 0; transform: translateY(-5px); }
-
   to { opacity: 1; transform: translateY(0); }
-
 }
-
 .order-time-tag {
-
   display: inline-block;
-
   background: #27272a;
-
   color: #a1a1aa;
-
   padding: 1px 6px;
-
   border-radius: 4px;
-
   font-size: 10px;
-
   margin-left: 8px;
-
   cursor: pointer;
-
   border: 1px solid #3f3f46;
-
 }
-
 .order-time-tag:hover {
-
   background: #3f3f46;
-
   color: #fbbf24;
-
 }
-
 .food-item {
-
   background: #1a1d27;
-
   border-radius: 12px;
-
   padding: 14px;
-
   margin-bottom: 10px;
-
   display: flex;
-
   justify-content: space-between;
-
   align-items: center;
-
   cursor: pointer;
-
   border: 2px solid transparent;
-
   transition: all 0.2s;
-
   position: relative;
-
 }
-
 .food-item.waiting {
-
   border-color: #fbbf24;
-
 }
-
 .food-item.served {
-
   background: #14231a;
-
   border-color: #22c55e;
-
 }
-
 .food-item .info { flex: 1; }
-
 .food-item .name {
-
   font-size: 16px;
-
   font-weight: 500;
-
 }
-
 .food-item.served .name {
-
   text-decoration: line-through;
-
   color: #71717a;
-
 }
-
 .food-item .price {
-
   color: #71717a;
-
   font-size: 14px;
-
   margin-left: 8px;
-
 }
-
 .food-item .meta {
-
   font-size: 12px;
-
   color: #71717a;
-
   margin-top: 4px;
-
 }
-
 .food-item.waiting .wait-time {
-
   color: #fbbf24;
-
   font-weight: 600;
-
 }
-
 .food-item.served .served-time {
-
   color: #22c55e;
-
 }
-
 .food-item .status {
-
   font-size: 14px;
-
   font-weight: 600;
-
   padding: 6px 12px;
-
   border-radius: 20px;
-
   min-width: 60px;
-
   text-align: center;
-
 }
-
 .food-item.waiting .status {
-
   background: rgba(251, 191, 36, 0.15);
-
   color: #fbbf24;
-
 }
-
 .food-item.served .status {
-
   background: rgba(34, 197, 94, 0.15);
-
   color: #22c55e;
-
 }
-
 .food-item .delete-btn {
-
   position: absolute;
-
   top: 8px;
-
   right: 8px;
-
   background: none;
-
   border: none;
-
   color: #52525b;
-
   font-size: 18px;
-
   cursor: pointer;
-
   padding: 4px;
-
   line-height: 1;
-
 }
-
 .food-item .delete-btn:hover { color: #ef4444; }
-
 .empty-state {
-
   text-align: center;
-
   padding: 40px 20px;
-
   color: #52525b;
-
 }
-
 .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
-
 .empty-state p { font-size: 14px; }
-
 .action-buttons {
-
   display: flex;
-
   gap: 8px;
-
   margin-bottom: 16px;
-
   align-items: center;
-
 }
-
 .action-btn {
-
   padding: 10px 16px;
-
   border: none;
-
   border-radius: 8px;
-
   font-size: 13px;
-
   font-weight: 600;
-
   cursor: pointer;
-
 }
-
 .action-btn.reset {
-
   background: transparent;
-
   color: #dc2626;
-
   border: 1px solid #dc2626;
-
   font-size: 12px;
-
   padding: 8px 12px;
-
 }
-
 .action-btn.export {
-
   flex: 1;
-
   background: #2563eb;
-
   color: white;
-
 }
-
 .action-btn:active { opacity: 0.8; }
-
 .agent-hint {
-
   background: #1a1d27;
-
   border-radius: 10px;
-
   padding: 12px;
-
   margin-bottom: 16px;
-
   border: 1px solid #27272a;
-
   font-size: 12px;
-
   color: #71717a;
-
   line-height: 1.6;
-
   display: flex;
-
   justify-content: space-between;
-
   align-items: flex-start;
-
   gap: 12px;
-
 }
-
 .agent-hint strong {
-
   color: #fbbf24;
-
 }
-
 .agent-hint .left {
-
   flex: 1;
-
 }
-
 .agent-hint .right {
-
   text-align: right;
-
   min-width: 100px;
-
 }
-
 .agent-hint .clock {
-
   font-size: 20px;
-
   font-weight: bold;
-
   color: #fbbf24;
-
   font-family: 'Courier New', monospace;
-
 }
-
 .agent-hint .elapsed {
-
   font-size: 14px;
-
   color: #22c55e;
-
   font-family: 'Courier New', monospace;
-
   margin-top: 4px;
-
 }
-
 .agent-hint .elapsed-label {
-
   font-size: 10px;
-
   color: #52525b;
-
 }
-
 .footer {
-
   text-align: center;
-
   font-size: 12px;
-
   color: #52525b;
-
   padding: 20px 0;
-
 }
-
-
 
   /* ===== 上傳GitHub模態面板 ===== */
-
   .action-btn.upload {
-
     background: rgba(63, 185, 80, 0.15);
-
     color: #3fb950;
-
     border-color: rgba(63, 185, 80, 0.3);
-
   }
-
   .action-btn.upload:hover {
-
     background: rgba(63, 185, 80, 0.3);
-
   }
-
   .modal-overlay {
-
     position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-
     background: rgba(0,0,0,0.7); z-index: 1000;
-
     display: flex; align-items: center; justify-content: center;
-
     padding: 20px;
-
   }
-
   .modal-panel {
-
     background: #161b22; border: 1px solid #30363d;
-
     border-radius: 16px; width: 100%; max-width: 400px;
-
     overflow: hidden;
-
   }
-
   .modal-header {
-
     display: flex; justify-content: space-between; align-items: center;
-
     padding: 16px 20px; border-bottom: 1px solid #30363d;
-
   }
-
   .modal-header h3 { margin: 0; font-size: 18px; }
-
   .modal-close {
-
     background: none; border: none; color: #8b949e;
-
     font-size: 24px; cursor: pointer; padding: 0; line-height: 1;
-
   }
-
   .modal-body { padding: 20px; }
-
   .upload-info {
-
     background: #0d1117; border-radius: 8px; padding: 12px;
-
     margin-bottom: 16px; font-size: 13px; color: #8b949e;
-
   }
-
   .upload-info p { margin: 4px 0; }
-
   .upload-info strong { color: #e6edf3; }
-
   .form-group label {
-
     display: block; font-size: 13px; color: #8b949e; margin-bottom: 8px;
-
   }
-
   .form-group input {
-
     width: 100%; padding: 12px; background: #0d1117;
-
     border: 1px solid #30363d; border-radius: 8px;
-
     color: #e6edf3; font-size: 14px; box-sizing: border-box;
-
   }
-
   .form-group input:focus { border-color: #388bfd; outline: none; }
-
   .hint { font-size: 11px; color: #484f58; margin-top: 6px; }
-
   .modal-footer {
-
     display: flex; gap: 10px; padding: 16px 20px;
-
     border-top: 1px solid #30363d;
-
   }
-
   .modal-btn {
-
     flex: 1; padding: 12px; border: none; border-radius: 8px;
-
     font-size: 14px; font-weight: 600; cursor: pointer;
-
   }
-
   .modal-btn.cancel {
-
     background: #21262d; color: #8b949e;
-
   }
-
   .modal-btn.confirm {
-
     background: #1f6feb; color: white;
-
   }
-
   .modal-btn.confirm:hover { background: #1a5fd0; }
-
   .action-btn.clear {
-
     background: rgba(248, 81, 73, 0.15);
-
     color: #f85149;
-
     border-color: rgba(248, 81, 73, 0.3);
-
   }
-
   .action-btn.clear:hover {
-
     background: rgba(248, 81, 73, 0.3);
-
   }
-
 </style>
-
 </head>
-
 <body>
 
-
-
 <div class="header">
-
   <div class="header-left">
-
-    <h1>🍽️ 上菜 Checklist</h1>
-
-    <div class="subtitle">HIS Tools</div>
-
+    <img src="logo.png" alt="HIS Tools" style="width:34px;height:34px;border-radius:8px;object-fit:contain;flex-shrink:0">
+    <div class="tt">
+      <h1>上菜 Checklist</h1>
+      <div class="subtitle">HIS Tools</div>
+    </div>
   </div>
-
   <div class="header-right">
-
     <label>枱號</label>
-
     <input type="text" id="tableNo" placeholder="31A" value="">
-
     <label>預設下單</label>
-
     <input type="time" id="orderTime" value="">
-
     <button class="add-order-btn" onclick="setNowAsOrderTime()" title="設定現在時間為新食物嘅下單時間（已有食物唔會變）">➕ 加單</button>
-
   </div>
-
 </div>
-
-
 
 <div class="agent-hint">
-
   <div class="left">
-
     <strong>🤖 Agent 指令：</strong><br>
-
     <strong>J04</strong> + 餐單相 → 認枱號、認菜式，自動更新模板（新單用現在時間）<br>
-
     <strong>J04</strong> + 食物相 → 認食物，標記已上，自動更新模板<br>
-
     <strong>J04: clear</strong> → 清空模板<br>
-
     <span style="color:#52525b">💡 每次上傳餐單相都當一次新下單，已有菜式保留原下單時間</span><br>
-
     <span style="color:#52525b">更新後按「⬇️ 下載Github」載入最新模板</span>
-
   </div>
-
   <div class="right">
-
     <div class="clock" id="currentTime">--:--:--</div>
-
     <div class="elapsed-label">已用餐</div>
-
     <div class="elapsed" id="elapsedTime">00:00:00</div>
-
   </div>
-
 </div>
-
-
 
 <div class="stats-bar">
-
   <div class="stat-box waiting">
-
     <div class="num" id="waitCount">0</div>
-
     <div class="label">未上</div>
-
   </div>
-
   <div class="stat-box served">
-
     <div class="num" id="servedCount">0</div>
-
     <div class="label">已上</div>
-
   </div>
-
   <div class="stat-box total">
-
     <div class="num" id="totalAmount">$0</div>
-
     <div class="label">總金額</div>
-
   </div>
-
 </div>
-
-
 
 <div class="add-form">
-
   <h3>➕ 新增食物</h3>
-
   <div class="add-inputs">
-
     <input type="text" name="name" placeholder="食物名稱" id="newName">
-
     <input type="number" name="price" placeholder="價錢" id="newPrice" min="0">
-
   </div>
-
   <button class="add-btn" onclick="addItem()">加入清單</button>
-
 </div>
-
-
 
 <div class="food-list" id="foodList">
-
   <div class="empty-state">
-
     <div class="icon">🍜</div>
-
     <p>仲未有食物，喺上面加入啦！</p>
-
   </div>
-
 </div>
-
-
 
 <div class="action-buttons">
-
   <button class="action-btn clear" onclick="clearAll()">🗑️ 清空</button>
-
   <button class="action-btn reset" onclick="resetAll()">⬇️ 下載Github</button>
-
   <button class="action-btn upload" onclick="openUploadModal()">☁️ 上傳GitHub</button>
-
 </div>
-
-
 
 <!-- 上傳GitHub模態面板 -->
-
 <div id="uploadModal" class="modal-overlay" style="display:none;">
-
   <div class="modal-panel">
-
     <div class="modal-header">
-
       <h3>☁️ 上傳到GitHub</h3>
-
       <button class="modal-close" onclick="closeUploadModal()">×</button>
-
     </div>
-
     <div class="modal-body">
-
       <div class="upload-info">
-
         <p><strong>倉庫：</strong>hkharrycheng/food-arrival</p>
-
         <p><strong>文件：</strong>food-data.json</p>
-
         <p><strong>數據：</strong><span id="uploadCount">載入中...</span></p>
-
       </div>
-
       <div class="form-group">
-
         <label for="githubToken">GitHub Personal Access Token</label>
-
         <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" autocomplete="off">
-
-        <p class="hint" id="tokenStatus">輸入後會自動加密儲存，下次唔使再輸入</p>
-        <button type="button" id="clearTokenBtn" onclick="clearSavedToken();document.getElementById('githubToken').value='';document.getElementById('tokenStatus').textContent='Token已清除，請重新輸入';document.getElementById('tokenStatus').style.color='#f85149';this.style.display='none';" style="display:none;background:transparent;border:1px solid #f85149;color:#f85149;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px;margin-top:5px;">🗑️ 清除已儲存Token</button>
-
+        <p class="hint">Token只用於本次上傳，唔會儲存</p>
       </div>
-
     </div>
-
     <div class="modal-footer">
-
       <button class="modal-btn cancel" onclick="closeUploadModal()">取消</button>
-
       <button class="modal-btn confirm" onclick="uploadToGitHub()">確認上傳</button>
-
     </div>
-
   </div>
-
 </div>
-
-
 
 <div class="footer">
-
-  HIS Tools © 2026.1.03 · 數據儲存於本地瀏覽器
-
+  HIS Tools © 2026.1.04 · 數據儲存於本地瀏覽器
 </div>
 
-
-
 <script>
-// ===== TOKEN加密儲存 =====
-const TOKEN_KEY = 'foodArrivalGhToken';
-const TOKEN_SECRET = 'HIS_Food_Arrival_2026_Secret_Key';
-
-function encryptToken(token) {
-  // XOR加密 + Base64編碼
-  let result = '';
-  for (let i = 0; i < token.length; i++) {
-    result += String.fromCharCode(token.charCodeAt(i) ^ TOKEN_SECRET.charCodeAt(i % TOKEN_SECRET.length));
-  }
-  return btoa(unescape(encodeURIComponent(result)));
-}
-
-function decryptToken(encrypted) {
-  try {
-    const decoded = decodeURIComponent(escape(atob(encrypted)));
-    let result = '';
-    for (let i = 0; i < decoded.length; i++) {
-      result += String.fromCharCode(decoded.charCodeAt(i) ^ TOKEN_SECRET.charCodeAt(i % TOKEN_SECRET.length));
-    }
-    return result;
-  } catch(e) {
-    return null;
-  }
-}
-
-function getSavedToken() {
-  const encrypted = localStorage.getItem(TOKEN_KEY);
-  if (!encrypted) return null;
-  return decryptToken(encrypted);
-}
-
-function saveToken(token) {
-  const encrypted = encryptToken(token);
-  localStorage.setItem(TOKEN_KEY, encrypted);
-}
-
-function clearSavedToken() {
-  localStorage.removeItem(TOKEN_KEY);
-}
-
-
 let items = [];
-
 let tableNo = '';
-
 let orderTime = '';
-
 let collapsedGroups = {}; // 記錄分組收合狀態：{ "18:28": true/false }
 
-
-
 // 內置預設數據（file:// 本地打開時用）- 模擬分次下單
-
 const DEFAULT_DATA = {
-
   items: [
-
     // 第一次下單 18:28
-
     {id: 1, name: "炙燒黑椒蠔", price: 10, status: "served", servedTime: "2026-10-08T18:35:00", orderTime: "18:28"},
-
     {id: 2, name: "北海道巨大L Size珍寶帆立貝", price: 21, status: "served", servedTime: "2026-10-08T18:40:00", orderTime: "18:28"},
-
     {id: 3, name: "辣味三文魚", price: 17, status: "served", servedTime: "2026-10-08T18:45:00", orderTime: "18:28"},
-
     {id: 4, name: "牛肉烏冬", price: 32, status: "served", servedTime: "2026-10-08T18:50:00", orderTime: "18:28"},
-
     // 第二次下單 19:15（加單）
-
     {id: 5, name: "元氣卷", price: 22, status: "served", servedTime: "2026-10-08T19:25:00", orderTime: "19:15"},
-
     {id: 6, name: "三文魚籽", price: 17, status: "served", servedTime: "2026-10-08T19:30:00", orderTime: "19:15"},
-
     {id: 7, name: "海膽墨魚", price: 17, status: "waiting", servedTime: null, orderTime: "19:15"},
-
     // 第三次下單 19:45（再加單）
-
     {id: 8, name: "蔥香脆蒜海鮮", price: 14, status: "waiting", servedTime: null, orderTime: "19:45"},
-
     {id: 9, name: "北海道巨大L Size珍寶帆立貝 x2", price: 42, status: "waiting", servedTime: null, orderTime: "19:45"},
-
     {id: 10, name: "辛辣吞拿魚蔥花卷", price: 14, status: "waiting", servedTime: null, orderTime: "19:45"}
-
   ],
-
   tableNo: "31A",
-
   orderTime: "18:28" // 預設下單時間（新增食物時用）
-
 };
 
-
-
 // 從 JSON 模板載入預設數據（http/https 環境先用到）
-
 async function loadFromJson() {
-
   // 先用內置預設
-
   items = [...DEFAULT_DATA.items];
-
   tableNo = DEFAULT_DATA.tableNo;
-
   orderTime = DEFAULT_DATA.orderTime;
-
   
-
   // 嘗試 fetch 外部 JSON（GitHub Pages 先成功）
-
   if (window.location.protocol === 'http:' || window.location.protocol === 'https:') {
-
     try {
-
       const response = await fetch('food-data.json?t=' + Date.now());
-
       if (response.ok) {
-
         const data = await response.json();
-
         items = data.items || items;
-
         tableNo = data.tableNo || tableNo;
-
         orderTime = data.orderTime || orderTime;
-
         return true;
-
       }
-
     } catch (e) {
-
       console.log('無法讀取 food-data.json，使用內置預設');
-
     }
-
   }
-
   return false;
-
 }
-
-
 
 // 載入數據：優先 localStorage，冇就讀 JSON 模板
-
 async function loadData() {
-
   const saved = localStorage.getItem('foodArrivalData');
-
   if (saved) {
-
     const data = JSON.parse(saved);
-
     items = data.items || [];
-
     tableNo = data.tableNo || '';
-
     orderTime = data.orderTime || '';
-
     collapsedGroups = data.collapsedGroups || {};
-
   } else {
-
     await loadFromJson();
-
     // 第一次讀取後，存入 localStorage
-
     saveData();
-
   }
-
   // 確保每道菜都有自己嘅 orderTime（舊數據兼容）
-
   // 加單時只改全局預設時間，唔會影響已有菜式
-
   items.forEach(item => {
-
     if (!item.orderTime) {
-
       item.orderTime = orderTime; // 用當前全局時間填充，之後就唔會再變
-
     }
-
   });
-
   saveData();
-
   document.getElementById('tableNo').value = tableNo;
-
   document.getElementById('orderTime').value = orderTime;
-
   if (!orderTime) {
-
     const now = new Date();
-
     orderTime = now.toTimeString().slice(0, 5);
-
     document.getElementById('orderTime').value = orderTime;
-
   }
-
   render();
-
 }
-
-
 
 // 儲存到本地
-
 function saveData() {
-
   localStorage.setItem('foodArrivalData', JSON.stringify({
-
     items, tableNo, orderTime, collapsedGroups
-
   }));
-
 }
-
-
 
 // 將現在時間設為預設下單時間（加單用）
-
 // 注意：只影響之後新增嘅食物，已有食物嘅下單時間唔會變
-
 function setNowAsOrderTime() {
-
   const now = new Date();
-
   const timeStr = now.toTimeString().slice(0, 5);
-
   const oldTime = orderTime;
-
   orderTime = timeStr;
-
   document.getElementById('orderTime').value = timeStr;
-
   saveData();
-
   render();
-
   // 提示用戶
-
   const btn = event.target;
-
   const originalText = btn.textContent;
-
   btn.textContent = `✅ 新單用 ${timeStr}`;
-
   btn.style.background = '#16a34a';
-
   setTimeout(() => {
-
     btn.textContent = originalText;
-
     btn.style.background = '';
-
   }, 2000);
-
 }
-
-
 
 // 新增項目
-
 function addItem() {
-
   const name = document.getElementById('newName').value.trim();
-
   const price = parseFloat(document.getElementById('newPrice').value) || 0;
-
   if (!name) {
-
     alert('請輸入食物名稱');
-
     return;
-
   }
-
   items.push({
-
     id: Date.now(),
-
     name,
-
     price,
-
     status: 'waiting',
-
     servedTime: null,
-
     orderTime: orderTime // 使用頁面頂部嘅預設下單時間
-
   });
-
   document.getElementById('newName').value = '';
-
   document.getElementById('newPrice').value = '';
-
   saveData();
-
   render();
-
 }
-
-
 
 // 切換狀態
-
 function toggleItem(id) {
-
   const item = items.find(i => i.id === id);
-
   if (item) {
-
     if (item.status === 'waiting') {
-
       item.status = 'served';
-
       item.servedTime = new Date().toISOString();
-
     } else {
-
       item.status = 'waiting';
-
       item.servedTime = null;
-
     }
-
     saveData();
-
     render();
-
   }
-
 }
-
-
 
 // 刪除項目
-
 function deleteItem(id, event) {
-
   event.stopPropagation();
-
   if (confirm('確定刪除呢項？')) {
-
     items = items.filter(i => i.id !== id);
-
     saveData();
-
     render();
-
   }
-
 }
-
-
 
 // 計算等候時間（用每道菜自己嘅下單時間）
-
 function getWaitTime(item) {
-
   const itemOrderTime = item.orderTime || orderTime;
-
   if (!itemOrderTime) return '';
-
   
-
   const [h, m] = itemOrderTime.split(':').map(Number);
-
   const order = new Date();
-
   order.setHours(h, m, 0, 0);
-
   
-
   let endTime;
-
   if (item.status === 'served' && item.servedTime) {
-
     endTime = new Date(item.servedTime);
-
   } else {
-
     endTime = new Date();
-
   }
-
   
-
   const diff = Math.floor((endTime - order) / 60000);
-
   if (diff < 0) return '未到下單時間';
-
   if (diff < 60) return `等了 ${diff} 分鐘`;
-
   const hrs = Math.floor(diff / 60);
-
   const mins = diff % 60;
-
   return `等了 ${hrs} 小時 ${mins} 分鐘`;
-
 }
-
-
 
 // 修改單道菜嘅下單時間
-
 function changeOrderTime(id, event) {
-
   event.stopPropagation();
-
   const item = items.find(i => i.id === id);
-
   if (!item) return;
-
   const currentTime = item.orderTime || orderTime;
-
   const newTime = prompt('輸入呢道菜嘅下單時間（HH:MM）：', currentTime);
-
   if (newTime && /^\d{2}:\d{2}$/.test(newTime)) {
-
     item.orderTime = newTime;
-
     saveData();
-
     render();
-
   }
-
 }
-
-
 
 // 切換分組收合
-
 function toggleGroup(orderTimeKey) {
-
   collapsedGroups[orderTimeKey] = !collapsedGroups[orderTimeKey];
-
   saveData();
-
   render();
-
 }
-
-
 
 // 渲染（按下單時間分組，支援收合）
-
 function render() {
-
   const list = document.getElementById('foodList');
-
   const waiting = items.filter(i => i.status === 'waiting');
-
   const served = items.filter(i => i.status === 'served');
-
   const total = items.reduce((sum, i) => sum + (i.price || 0), 0);
 
-
-
   document.getElementById('waitCount').textContent = waiting.length;
-
   document.getElementById('servedCount').textContent = served.length;
-
   document.getElementById('totalAmount').textContent = '$' + total;
 
-
-
   if (items.length === 0) {
-
     list.innerHTML = `
-
       <div class="empty-state">
-
         <div class="icon">🍜</div>
-
         <p>仲未有食物，喺上面加入啦！</p>
-
       </div>
-
     `;
-
     return;
-
   }
-
-
 
   // 按下單時間分組
-
   const groups = {};
-
   items.forEach(item => {
-
     const ot = item.orderTime || orderTime || '未設定';
-
     if (!groups[ot]) groups[ot] = [];
-
     groups[ot].push(item);
-
   });
-
-
 
   // 排序分組
-
   const sortedTimes = Object.keys(groups).sort();
 
-
-
   let html = '';
-
   sortedTimes.forEach((time, idx) => {
-
     const groupItems = groups[time];
-
     const groupWaiting = groupItems.filter(i => i.status === 'waiting').length;
-
     const groupServed = groupItems.filter(i => i.status === 'served').length;
-
     const allServed = groupWaiting === 0;
-
     
-
     // 自動收合：全上咗就自動收合（除非用戶手動展開）
-
     let isCollapsed = collapsedGroups[time];
-
     if (isCollapsed === undefined) {
-
       isCollapsed = allServed; // 全上自動收合
-
     }
-
     
-
     const collapseIcon = isCollapsed ? '▶' : '▼';
-
     const collapseClass = isCollapsed ? 'collapsed' : 'expanded';
-
     const servedClass = allServed ? 'all-served' : '';
-
     
-
     html += `
-
       <div class="order-group ${collapseClass} ${servedClass}">
-
         <div class="order-group-header" onclick="toggleGroup('${time}')">
-
           <span class="collapse-icon">${collapseIcon}</span>
-
           <span class="order-batch">第 ${idx + 1} 次下單</span>
-
           <span class="order-time-badge">🕐 ${time}</span>
-
           <span class="order-group-stats">${groupServed}已上 / ${groupWaiting}未上</span>
-
           ${allServed ? '<span class="all-served-badge">✅ 全上</span>' : ''}
-
         </div>
-
         <div class="order-group-content" style="display: ${isCollapsed ? 'none' : 'block'}">
-
     `;
-
     
-
     groupItems.forEach(item => {
-
       const meta = item.status === 'waiting'
-
         ? `<span class="wait-time">${getWaitTime(item)}</span>`
-
         : `<span class="served-time">上菜：${item.servedTime ? new Date(item.servedTime).toLocaleTimeString('zh-HK', {hour:'2-digit', minute:'2-digit'}) : '-'}</span>`;
-
       
-
       html += `
-
         <div class="food-item ${item.status}" onclick="toggleItem(${item.id})">
-
           <button class="delete-btn" onclick="deleteItem(${item.id}, event)">×</button>
-
           <div class="info">
-
             <div class="name">${item.name}<span class="price">$${item.price}</span></div>
-
             <div class="meta">
-
               ${meta}
-
               <span class="order-time-tag" onclick="changeOrderTime(${item.id}, event)" title="點擊修改下單時間">下單 ${item.orderTime || orderTime || '未設定'} ✏️</span>
-
             </div>
-
           </div>
-
           <div class="status">${item.status === 'waiting' ? '未上' : '已上 ✓'}</div>
-
         </div>
-
       `;
-
     });
-
     
-
     html += '</div></div>';
-
   });
-
-
 
   list.innerHTML = html;
-
 }
-
-
 
 // 全部重置：清除 localStorage，重新讀取 JSON 模板
-
 function clearAll() {
-
   if (confirm('確定清空所有數據？會清除菜式、枱號、下單時間。')) {
-
     items = [];
-
     tableNo = '';
-
     orderTime = '';
-
     collapsedGroups = {};
-
     saveData();
-
     document.getElementById('tableNo').value = '';
-
     document.getElementById('orderTime').value = '';
-
     renderItems();
-
     updateStats();
-
   }
-
 }
-
-
 
 async function resetAll() {
-
   if (confirm('確定從GitHub下載最新數據？會覆蓋本地記錄。')) {
-
     localStorage.removeItem('foodArrivalData');
-
     // 優先從GitHub加載最新food-data.json
-
     const githubUrl = 'https://raw.githubusercontent.com/hkharrycheng/food-arrival/main/food-data.json?t=' + Date.now();
-
     try {
-
       const resp = await fetch(githubUrl);
-
       if (resp.ok) {
-
         const data = await resp.json();
-
         items = data.items || [];
-
         tableNo = data.tableNo || '';
-
         orderTime = data.orderTime || '';
-
         collapsedGroups = data.collapsedGroups || {};
-
         items.forEach(item => {
-
           if (!item.orderTime) item.orderTime = orderTime;
-
         });
-
         saveData();
-
         document.getElementById('tableNo').value = tableNo;
-
         document.getElementById('orderTime').value = orderTime;
-
         renderItems();
-
         updateStats();
-
         alert('✅ 已從GitHub載入最新數據（' + items.length + '項）');
-
         return;
-
       }
-
     } catch(e) {
-
       console.log('GitHub載入失敗，使用本地模板:', e);
-
     }
-
     // fallback：本地模板
-
     await loadData();
-
   }
-
 }
-
-
 
 // 匯出清單
-
 function exportData() {
-
   const waiting = items.filter(i => i.status === 'waiting');
-
   const served = items.filter(i => i.status === 'served');
-
   let text = `🍽️ 上菜 Checklist\n`;
-
   text += `枱號：${tableNo || '未設定'}｜落單時間：${orderTime || '未設定'}\n`;
-
   text += `━━━━━━━━━━━━━━━━\n`;
-
   text += `✅ 已上 (${served.length}項)：\n`;
-
   served.forEach(i => text += `  ✓ ${i.name}\n`);
-
   text += `\n⏳ 未上 (${waiting.length}項)：\n`;
-
   waiting.forEach(i => text += `  ⏳ ${i.name}\n`);
-
   text += `━━━━━━━━━━━━━━━━\n`;
-
   text += `總金額：$${items.reduce((s,i) => s+(i.price||0), 0)}`;
 
-
-
   navigator.clipboard.writeText(text).then(() => {
-
     alert('已複製到剪貼簿！');
-
   }).catch(() => {
-
     prompt('複製以下內容：', text);
-
   });
-
 }
-
-
 
 // 設定變更時儲存
-
 document.getElementById('tableNo').addEventListener('input', e => {
-
   tableNo = e.target.value;
-
   saveData();
-
 });
-
 document.getElementById('orderTime').addEventListener('change', e => {
-
   orderTime = e.target.value;
-
   saveData();
-
   render();
-
   updateClocks();
-
 });
-
-
 
 // Enter 鍵新增
-
 document.getElementById('newName').addEventListener('keypress', e => {
-
   if (e.key === 'Enter') addItem();
-
 });
-
 document.getElementById('newPrice').addEventListener('keypress', e => {
-
   if (e.key === 'Enter') addItem();
-
 });
-
-
 
 // 每30秒更新等候時間
-
 setInterval(render, 30000);
 
-
-
 // 更新時鐘
-
 function updateClocks() {
-
   const now = new Date();
-
   // 現在時間
-
   const hh = now.getHours().toString().padStart(2, '0');
-
   const mm = now.getMinutes().toString().padStart(2, '0');
-
   const ss = now.getSeconds().toString().padStart(2, '0');
-
   document.getElementById('currentTime').textContent = `${hh}:${mm}:${ss}`;
-
   
-
   // 已用餐時間（從最早嘅下單時間計算）
-
   const allOrderTimes = items.map(i => i.orderTime || orderTime).filter(Boolean);
-
   if (allOrderTimes.length > 0) {
-
     const earliestTime = allOrderTimes.sort()[0]; // 最早嘅下單時間
-
     const [oh, om] = earliestTime.split(':').map(Number);
-
     const orderDate = new Date();
-
     orderDate.setHours(oh, om, 0, 0);
-
     let diff = Math.floor((now - orderDate) / 1000);
-
     if (diff < 0) diff += 86400; // 跨日處理
-
     const eh = Math.floor(diff / 3600).toString().padStart(2, '0');
-
     const em = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
-
     const es = (diff % 60).toString().padStart(2, '0');
-
     document.getElementById('elapsedTime').textContent = `${eh}:${em}:${es}`;
-
   } else {
-
     document.getElementById('elapsedTime').textContent = '00:00:00';
-
   }
-
 }
-
-
 
 // 每秒更新時鐘
-
 setInterval(updateClocks, 1000);
-
 updateClocks();
 
-
-
 // 初始化
-
 loadData();
 
-
-
 // ===== 上傳到GitHub =====
-
 function openUploadModal() {
-
   const saved = localStorage.getItem('foodArrivalData');
-
   let count = 0;
-
   if (saved) {
-
     try {
-
       const data = JSON.parse(saved);
-
       count = data.items ? data.items.length : 0;
-
     } catch(e) {}
-
   }
-
   document.getElementById('uploadCount').textContent = count + ' 項食物';
-
-  // 檢查是否有已儲存的加密Token
-  const savedToken = getSavedToken();
-  if (savedToken) {
-    document.getElementById('githubToken').value = savedToken;
-    document.getElementById('tokenStatus').textContent = '✅ 已載入已儲存Token（加密）';
-    document.getElementById('tokenStatus').style.color = '#3fb950';
-    document.getElementById('clearTokenBtn').style.display = 'inline-block';
-  } else {
-    document.getElementById('githubToken').value = '';
-    document.getElementById('tokenStatus').textContent = '輸入後會自動加密儲存，下次唔使再輸入';
-    document.getElementById('tokenStatus').style.color = '#888';
-    document.getElementById('clearTokenBtn').style.display = 'none';
-    document.getElementById('githubToken').focus();
-  }
-
   document.getElementById('uploadModal').style.display = 'flex';
-
+  document.getElementById('githubToken').value = '';
+  document.getElementById('githubToken').focus();
 }
-
-
 
 function closeUploadModal() {
-
   document.getElementById('uploadModal').style.display = 'none';
-
 }
-
-
 
 async function uploadToGitHub() {
-
   const token = document.getElementById('githubToken').value.trim();
-
   if (!token) {
-
     alert('⚠️ 請輸入GitHub Token');
-
     return;
-
   }
-
-  // 加密儲存Token（無過期日期）
-  saveToken(token);
-
   
-
   const saved = localStorage.getItem('foodArrivalData');
-
   if (!saved) {
-
     alert('⚠️ 冇數據可上傳');
-
     return;
-
   }
-
   
-
   const btn = document.querySelector('.modal-btn.confirm');
-
   btn.textContent = '上傳中...';
-
   btn.disabled = true;
-
   
-
   try {
-
     // 可靠的base64編碼（支援中文）
-
     const content = btoa(unescape(encodeURIComponent(saved)));
-
     const repo = 'hkharrycheng/food-arrival';
-
     const path = 'food-data.json';
-
     const apiUrl = `https://api.github.com/repos/${repo}/contents/${path}`;
-
     const ghHeaders = {
-
       'Authorization': `token ${token}`,
-
       'Accept': 'application/vnd.github.v3+json',
-
       'Content-Type': 'application/json'
-
     };
-
     
-
     console.log('開始上傳到GitHub...');
-
     
-
     // 先獲取文件sha
-
     let sha = null;
-
     try {
-
       const getResp = await fetch(apiUrl, { headers: ghHeaders });
-
       console.log('獲取文件狀態:', getResp.status);
-
       if (getResp.ok) {
-
         const fileData = await getResp.json();
-
         sha = fileData.sha;
-
         console.log('文件存在，sha:', sha.substring(0,7));
-
       } else {
-
         console.log('文件唔存在，將新建');
-
       }
-
     } catch(e) {
-
       console.log('獲取文件失敗:', e);
-
     }
-
     
-
     // 上傳
-
     const body = {
-
       message: `更新food-data.json (${new Date().toLocaleString('zh-HK')})`,
-
       content: content,
-
       branch: 'main'
-
     };
-
     if (sha) body.sha = sha;
-
     
-
     const resp = await fetch(apiUrl, {
-
       method: 'PUT',
-
       headers: ghHeaders,
-
       body: JSON.stringify(body)
-
     });
-
     
-
     console.log('上傳狀態:', resp.status);
-
     
-
     if (resp.ok) {
-
       alert('✅ 上傳成功！\n\n文件已更新到：\nhttps://github.com/hkharrycheng/food-arrival/blob/main/food-data.json');
-
       closeUploadModal();
-
     } else {
-
       let errMsg = resp.status + ' ' + resp.statusText;
-
       try {
-
         const err = await resp.json();
-
         errMsg = err.message || errMsg;
-
         if (err.errors) errMsg += '\n' + JSON.stringify(err.errors);
-
       } catch(e) {}
-
       alert(`❌ 上傳失敗：${errMsg}\n\n請檢查：\n1. Token是否正確\n2. Token是否有repo權限\n3. 按F12睇Console詳細錯誤`);
-
     }
-
   } catch(e) {
-
     console.error('上傳錯誤:', e);
-
     alert(`❌ 錯誤：${e.message}\n\n可能係CORS或網絡問題，請檢查Console`);
-
   } finally {
-
     btn.textContent = '確認上傳';
-
     btn.disabled = false;
-
   }
-
 }
 
-
-
 // 點擊模態背景關閉
-
 document.addEventListener('click', function(e) {
-
   if (e.target.id === 'uploadModal') {
-
     closeUploadModal();
-
   }
-
 });
-
 </script>
-
 </body>
-
 </html>
-
