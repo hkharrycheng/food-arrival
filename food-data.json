@@ -4,16 +4,16 @@
       "id": 1,
       "name": "北海道鮮甜白粟米軍艦",
       "price": 12,
-      "status": "waiting",
-      "servedTime": null,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
       "orderTime": "18:12"
     },
     {
       "id": 2,
       "name": "特長吉列芝士條(松露風味)",
       "price": 19,
-      "status": "waiting",
-      "servedTime": null,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
       "orderTime": "18:12"
     },
     {
@@ -28,102 +28,152 @@
       "id": 4,
       "name": "玉子",
       "price": 12,
-      "status": "waiting",
-      "servedTime": null,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
       "orderTime": "18:12"
     },
     {
       "id": 5,
       "name": "北寄貝沙律",
       "price": 12,
-      "status": "waiting",
-      "servedTime": null,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
       "orderTime": "18:12"
     },
     {
       "id": 6,
       "name": "牛油果卷",
       "price": 12,
-      "status": "waiting",
-      "servedTime": null,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
       "orderTime": "18:12"
     },
     {
       "id": 7,
       "name": "炸豬扒手卷 x2",
       "price": 40,
-      "status": "waiting",
-      "servedTime": null,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
       "orderTime": "18:12"
     },
     {
       "id": 8,
       "name": "蒲燒三文魚腩",
       "price": 12,
-      "status": "waiting",
-      "servedTime": null,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
       "orderTime": "18:12"
     },
     {
       "id": 9,
       "name": "燒三文魚",
       "price": 12,
-      "status": "waiting",
-      "servedTime": null,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
       "orderTime": "18:12"
     },
     {
       "id": 10,
       "name": "熟帶子",
       "price": 12,
-      "status": "waiting",
-      "servedTime": null,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
       "orderTime": "18:12"
     },
     {
       "id": 11,
       "name": "炭烤雞爽肉",
       "price": 12,
-      "status": "waiting",
-      "servedTime": null,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
       "orderTime": "18:12"
     },
     {
       "id": 12,
       "name": "醬油漬豪快南方藍鰭中拖羅",
       "price": 28,
-      "status": "waiting",
-      "servedTime": null,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
       "orderTime": "18:12"
     },
     {
       "id": 13,
       "name": "極上吞拿魚三貫(本鮪大拖羅/吞拿魚/長鰭吞拿魚)",
       "price": 38,
-      "status": "waiting",
-      "servedTime": null,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
       "orderTime": "18:12"
     },
     {
       "id": 14,
       "name": "油甘魚",
       "price": 20,
-      "status": "waiting",
-      "servedTime": null,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
       "orderTime": "18:12"
     },
     {
       "id": 15,
       "name": "鹽蔥油甘魚",
       "price": 21,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
+      "orderTime": "18:12"
+    },
+    {
+      "id": 16,
+      "name": "沙律軍艦三貫(三文魚、甜玉米及北寄貝沙律軍艦)",
+      "price": 17,
       "status": "waiting",
       "servedTime": null,
-      "orderTime": "18:12"
+      "orderTime": "18:14"
+    },
+    {
+      "id": 17,
+      "name": "厚燒玉子(芝士味)",
+      "price": 14,
+      "status": "served",
+      "servedTime": "2026-11-15T10:51:28Z",
+      "orderTime": "18:14"
+    },
+    {
+      "id": 18,
+      "name": "四色海鮮手卷 (三文魚、吞拿魚蓉、小柱及三文魚籽)",
+      "price": 20,
+      "status": "waiting",
+      "servedTime": null,
+      "orderTime": "18:39"
+    },
+    {
+      "id": 19,
+      "name": "軟殼蟹手卷",
+      "price": 29,
+      "status": "waiting",
+      "servedTime": null,
+      "orderTime": "18:39"
+    },
+    {
+      "id": 20,
+      "name": "香滑黑芝麻生乳扭紋軟雪糕配鯛魚燒",
+      "price": 25,
+      "status": "waiting",
+      "servedTime": null,
+      "orderTime": "18:39"
+    },
+    {
+      "id": 21,
+      "name": "炙燒鹽蔥帆立貝",
+      "price": 16,
+      "status": "waiting",
+      "servedTime": null,
+      "orderTime": "18:39"
     }
   ],
   "tableNo": "35E",
   "orderTime": "18:12",
   "collapsedGroups": {
-    "18:12": false
+    "18:12": false,
+    "18:14": false,
+    "18:39": false
   }
 }
